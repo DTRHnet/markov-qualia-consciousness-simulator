@@ -1,0 +1,53 @@
+{
+  "name": "QualiaPlayer",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string",
+      "description": "Shared room code grouping players in one field"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name"
+    },
+    "x": {
+      "type": "number",
+      "description": "Arena x position"
+    },
+    "y": {
+      "type": "number",
+      "description": "Arena y position"
+    },
+    "experience": {
+      "type": "number",
+      "description": "Current conscious state index 0-5"
+    },
+    "belief": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Probability distribution over the 6 experiences"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Heartbeat for stale-player filtering"
+    }
+  },
+  "required": [
+    "room_id"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
