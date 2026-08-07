@@ -68,6 +68,21 @@ After pushing your changes to git, open the Base44 dashboard and publish the app
 base44 dashboard open
 ```
 
+## Vercel Public Deploy
+
+This project is configured for a pure static SPA deployment on Vercel with no authentication required.
+
+### Deployment Steps
+1. Clone the repository.
+2. Run `npm install`.
+3. Run `npm run build`.
+4. Deploy the `dist/` folder to Vercel (or connect the GitHub repo to Vercel).
+
+### Notes
+- **Authentication**: The public Vercel version has all authentication gates removed. Users land directly on the QualiaFlow simulator.
+- **Multiplayer**: Multiplayer features require the original Base44 backend. When deployed on pure Vercel without the backend, the app will gracefully degrade to **solo mode**.
+- **SPA Routing**: A `vercel.json` is included to handle client-side routing.
+
 ## Docs & Support
 
 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
