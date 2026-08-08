@@ -45,6 +45,9 @@ export function useResponsiveCanvas(canvasRef) {
     updateCanvasSize()
 
     // Watch for resize
+    const container = canvas.parentElement
+    if (!container) return
+
     const resizeObserver = new ResizeObserver(() => {
       updateCanvasSize()
     })
