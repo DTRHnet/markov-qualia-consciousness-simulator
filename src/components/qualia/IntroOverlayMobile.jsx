@@ -17,7 +17,7 @@ export default function IntroOverlay({ roomCode, setRoomCode, onStart }) {
 
   return (
     <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
-      <div className="max-w-lg px-4 sm:px-6 text-center max-h-[90vh] overflow-y-auto">
+      <div className="max-w-lg px-6 text-center max-h-[90vh] overflow-y-auto">
         <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-white">Qualia Flow</h1>
         <p className="mt-3 text-sm sm:text-base text-white/60">
           A playable Markov Qualia Kernel. You are a conscious agent in a shared field —

@@ -1,8 +1,10 @@
 import React from 'react';
 import { STATES, STATE_COLORS } from '@/lib/qualia/constants';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ExperiencePanel({ player }) {
   if (!player) return null;
+  const isMobile = useIsMobile();
   const col = STATE_COLORS[player.experienceIdx];
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -44,7 +46,11 @@ export default function ExperiencePanel({ player }) {
       )}
       {player.fusionReady && !player.fused && (
         <div className="mt-3 rounded-lg bg-emerald-500/20 px-3 py-2 text-xs text-emerald-200">
-          Press <b>F</b> to fuse with {player.fusionCandidateName}
+          {isMobile ? (
+            <>Tap <b>Fuse</b> to merge with {player.fusionCandidateName}</>
+          ) : (
+            <>Press <b>F</b> to fuse with {player.fusionCandidateName}</>
+          )}
         </div>
       )}
     </div>

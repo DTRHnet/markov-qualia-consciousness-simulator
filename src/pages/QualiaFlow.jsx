@@ -6,9 +6,13 @@ import AgentList from '@/components/qualia/AgentList';
 import ConceptCard from '@/components/qualia/ConceptCard';
 import ConceptDialog from '@/components/qualia/ConceptDialog';
 import IntroOverlay from '@/components/qualia/IntroOverlay';
+import VirtualJoystick from '@/components/qualia/VirtualJoystick';
+import { useResponsiveCanvas } from '@/hooks/use-responsive-canvas';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function QualiaFlow() {
   const canvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
   const engineRef = useRef(null);
   const mpRef = useRef(null);
   const keys = useRef({});
@@ -17,6 +21,8 @@ export default function QualiaFlow() {
   const [roomCode, setRoomCode] = useState('');
   const [conceptOpen, setConceptOpen] = useState(false);
   const [spectator, setSpectator] = useState(false);
+  const isMobile = useIsMobile();
+  useResponsiveCanvas(canvasRef);
 
   // boot engine + multiplayer when the player enters a room
   useEffect(() => {
@@ -97,10 +103,29 @@ export default function QualiaFlow() {
 
   const humanCount = snap ? snap.agents.filter((a) => a.isRemote).length + 1 : 1;
 
+  const handleMobileMove = (x, y) => {
+    if (engineRef.current) {
+      engineRef.current.setPlayerInput(x, y);
+    }
+  };
+
+  const handleMobileFuse = () => {
+    if (engineRef.current) {
+      engineRef.current.requestFusion();
+    }
+  };
+
+  const handleMobileSpectator = () => {
+    const e = engineRef.current;
+    if (!e) return;
+    e.setSpectator(!e.spectator);
+    setSpectator(e.spectator);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-7xl px-4 py-6">
-        <header className="mb-4 flex items-center justify-between">
+        <header className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-light tracking-tight">Qualia Flow</h1>
             <p className="text-xs text-white/40">
@@ -113,16 +138,16 @@ export default function QualiaFlow() {
               )}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             <button
               onClick={toggleSpectator}
-              className="rounded-full border border-white/15 px-4 py-1.5 text-xs text-white/70 transition hover:bg-white/10"
+              className="flex-1 sm:flex-none rounded-full border border-white/15 px-4 py-1.5 text-xs text-white/70 transition hover:bg-white/10"
             >
               {spectator ? 'Spectating' : 'Spectator'}
             </button>
             <button
               onClick={() => setConceptOpen(true)}
-              className="rounded-full border border-white/15 px-4 py-1.5 text-xs text-white/70 transition hover:bg-white/10"
+              className="flex-1 sm:flex-none rounded-full border border-white/15 px-4 py-1.5 text-xs text-white/70 transition hover:bg-white/10"
             >
               Concept
             </button>
@@ -130,7 +155,7 @@ export default function QualiaFlow() {
         </header>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black">
+          <div ref={canvasContainerRef} className="relative overflow-hidden rounded-2xl border border-white/10 bg-black" style={{ aspectRatio: '1200 / 800' }}>
             <canvas ref={canvasRef} width={1200} height={800} className="block h-auto w-full" />
             {!started && (
               <IntroOverlay
@@ -146,12 +171,31 @@ export default function QualiaFlow() {
             )}
           </div>
 
-          <aside className="space-y-4">
+          {started && isMobile && (
+            <VirtualJoystick
+              onMove={handleMobileMove}
+              onFuse={handleMobileFuse}
+              onSpectator={handleMobileSpectator}
+              canFuse={snap?.player?.fusionReady}
+              isSpectating={spectator}
+            />
+          )}
+
+          <aside className="space-y-4 hidden lg:block">
             {snap?.player && !spectator && <ExperiencePanel player={snap.player} />}
             {snap?.agents && <AgentList agents={snap.agents} />}
             <ConceptCard onMore={() => setConceptOpen(true)} />
           </aside>
         </div>
+
+        {/* Mobile sidebar - shown below canvas on small screens */}
+        {started && isMobile && (
+          <div className="mt-4 space-y-4 lg:hidden">
+            {snap?.player && !spectator && <ExperiencePanel player={snap.player} />}
+            {snap?.agents && <AgentList agents={snap.agents} />}
+            <ConceptCard onMore={() => setConceptOpen(true)} />
+          </div>
+        )}
       </div>
 
       <ConceptDialog open={conceptOpen} onClose={() => setConceptOpen(false)} />

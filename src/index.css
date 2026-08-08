@@ -88,5 +88,27 @@
 
   body {
     @apply bg-background text-foreground font-body;
+    /* Prevent zoom on input focus on iOS */
+    font-size: 16px;
+  }
+
+  /* Prevent unwanted scrolling on mobile */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  /* Improve touch target sizes on mobile */
+  @media (max-width: 768px) {
+    button, input, select, textarea {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Canvas responsive sizing */
+  canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
   }
 }
